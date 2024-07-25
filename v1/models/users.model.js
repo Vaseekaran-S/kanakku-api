@@ -18,6 +18,10 @@ const UserShema = new mongoose.Schema({
     password: {
         type: String,
         require: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 },{
     timestamps: true

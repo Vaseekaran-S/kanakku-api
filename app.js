@@ -19,7 +19,7 @@ app.get("/", (req, res)=>{
 })
 
 // User Routes
-const v1ApiRoutes = require("./routes/v1.routes");
-app.use("/api/v1/", v1ApiRoutes);
+const v1ApiRouter = require("./routes/v1.routes");
+app.use("/api/v1/", v1ApiRouter);
 
 module.exports = app
