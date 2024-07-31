@@ -39,11 +39,11 @@ const createUser = async(req, res) => {
     try {
         const { name, email, mobile, password } = req.body;
         if(!name || !email || !mobile || !password) 
-            return res.status(400).json({ msg: "Client Error", error: "Name, Email, Mobile & Password are required!" })
+            return res.status(400).json({ error: "Client Error", msg: "Name, Email, Mobile & Password are required!" })
 
-        if(await userService.userExist(email)){
+        if(await userService.userExist(email))
             return res.status(409).json({ msg: "This Email Id is already used!" })
-        }
+        
         const response = await userService.createUser(req.body);
         res.status(200).json(response)
     } catch (error) {

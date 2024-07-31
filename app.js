@@ -7,8 +7,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Mongo Db Setup
-const mongoDbUrl = process.env.MONGO_DB_API;
-mongoose.connect(mongoDbUrl).then(()=>{
+mongoose.connect(process.env.MONGO_DB_API).then(()=>{
     console.log("MongoDb Connect");
 }).catch(err =>{
     console.log("MongoDb Not Connect : ", err);

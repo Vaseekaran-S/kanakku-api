@@ -5,21 +5,10 @@ const userExist = async (email) => {
     return await UserModel.exists({ email: email }) 
 }
 
-// Get all User
-const getUsers = async () => {
-    const data = await UserModel.find({ isDeleted: false });
-    return data;
-};
-
-// Delete all User
-const deleteUsers = async () => {
-    const data = await UserModel.deleteMany();
-    return data;
-};
-
 // Create a User
 const createUser = async ({ name, email, mobile, password }) => {
-    const data = await UserModel.create({ name, email, mobile, password });
+    const encryptedPassword = "jnkjn"
+    const data = await UserModel.create({ name, email, mobile, encryptedPassword });
     return { msg: "User created!", data };
 };
 
@@ -27,6 +16,12 @@ const createUser = async ({ name, email, mobile, password }) => {
 const getUser = async (email) => {
     const data = await UserModel.findOne({ email: email, isDeleted: false });
     return data || { msg: "User Not Found!" };
+};
+
+// Get all User
+const getUsers = async () => {
+    const data = await UserModel.find({ isDeleted: false });
+    return data;
 };
 
 // Update a User
@@ -39,6 +34,12 @@ const updateUser = async (email, body) => {
 const deleteUser = async (email) => {
     const data = await UserModel.updateOne({ email: email }, { isDeleted: true });
     return { msg: "User Data Deleted!" };
+};
+
+// Delete all User
+const deleteUsers = async () => {
+    const data = await UserModel.deleteMany();
+    return data;
 };
 
 module.exports = {

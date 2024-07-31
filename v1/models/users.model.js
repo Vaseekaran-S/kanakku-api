@@ -12,13 +12,15 @@ const UserShema = new mongoose.Schema({
         unique: true
     },
     mobile: {
-        type: String,
+        type: Number,
         require: true
     },
     password: {
         type: String,
         require: true
     },
+    resetPasswordToken: String,
+    resetPasswordTokenExpires: Date,
     isDeleted: {
         type: Boolean,
         default: false
