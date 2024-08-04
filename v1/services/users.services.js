@@ -1,15 +1,19 @@
 const UserModel = require("../models/users.model");
+const { hashPassword } = require("../utils/encrypt");
 
 // Check User Exists or Not
-const userExist = async (email) => {
+const isUserExist = async (email) => {
     return await UserModel.exists({ email: email }) 
 }
 
 // Create a User
 const createUser = async ({ name, email, mobile, password }) => {
-    const encryptedPassword = "jnkjn"
-    const data = await UserModel.create({ name, email, mobile, encryptedPassword });
-    return { msg: "User created!", data };
+    if(await isUserExist(email))
+        return { msg: "This mail is already taken!", error: "Client Error", status: 409 };
+    
+    const encryptedPassword = await hashPassword(password)
+    await UserModel.create({ name, email, mobile, password: encryptedPassword });
+    return { msg: "User created!", status: 200 };
 };
 
 // Get a User
@@ -32,8 +36,11 @@ const updateUser = async (email, body) => {
 
 // Delete a User
 const deleteUser = async (email) => {
+    if(!await isUserExist(email))
+        return { msg: "User not Found!", status: 404 }
     const data = await UserModel.updateOne({ email: email }, { isDeleted: true });
-    return { msg: "User Data Deleted!" };
+    console.log(data);
+    return { msg: "User Data Deleted!", status: 200 };
 };
 
 // Delete all User
@@ -47,7 +54,7 @@ module.exports = {
     getUser,
     updateUser,
     getUsers,
-    userExist,
+    isUserExist,
     deleteUser,
     deleteUsers
 };
