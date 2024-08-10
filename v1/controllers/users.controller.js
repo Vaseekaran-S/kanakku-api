@@ -1,5 +1,5 @@
 
-const userService = require("../services/users.services")
+const userService = require("../services/users.service")
 
 // GET: Get all Users Data
 const getUsers = async(req, res) => {
@@ -39,10 +39,10 @@ const createUser = async(req, res) => {
     try {
         const { name, email, mobile, password } = req.body;
         if(!name || !email || !mobile || !password) 
-            return res.status(400).json({ error: "Client Error", msg: "Name, Email, Mobile & Password are required!" })
+            return res.json({ error: "Client Error", msg: "Name, Email, Mobile & Password are required!" })
         
         const response = await userService.createUser(req.body);
-        res.status(response?.status).json(response)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
         res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })

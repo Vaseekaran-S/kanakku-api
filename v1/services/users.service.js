@@ -1,25 +1,27 @@
 const UserModel = require("../models/users.model");
-const { hashPassword } = require("../utils/encrypt");
+const { hashPassword, verifyHashPassword } = require("../utils/encrypt");
+const { createJwtToken } = require("../utils/jwt");
 
 // Check User Exists or Not
 const isUserExist = async (email) => {
-    return await UserModel.exists({ email: email }) 
+    return await UserModel.exists({ email: email })
 }
 
 // Create a User
 const createUser = async ({ name, email, mobile, password }) => {
-    if(await isUserExist(email))
-        return { msg: "This mail is already taken!", error: "Client Error", status: 409 };
-    
-    const encryptedPassword = await hashPassword(password)
+    if (await isUserExist(email))
+        return { type: "warning", message: "This mail is already taken!", error: "Client Error" };
+
+    const encryptedPassword = await hashPassword(password);
     await UserModel.create({ name, email, mobile, password: encryptedPassword });
-    return { msg: "User created!", status: 200 };
+    const token = await createJwtToken(email);
+    return { type: "success", message: "User created!", token };
 };
 
 // Get a User
 const getUser = async (email) => {
     const data = await UserModel.findOne({ email: email, isDeleted: false });
-    return data || { msg: "User Not Found!" };
+    return data || { message: "User Not Found!", type: "error" };
 };
 
 // Get all User
@@ -31,16 +33,16 @@ const getUsers = async () => {
 // Update a User
 const updateUser = async (email, body) => {
     const data = await UserModel.updateOne({ email: email }, { name: body?.name });
-    return { msg: "User Data Updated!" };
+    return { message: "User Data Updated!" };
 };
 
 // Delete a User
 const deleteUser = async (email) => {
-    if(!await isUserExist(email))
-        return { msg: "User not Found!", status: 404 }
+    if (!await isUserExist(email))
+        return { message: "User not Found!", type: "error", status: 404 }
     const data = await UserModel.updateOne({ email: email }, { isDeleted: true });
     console.log(data);
-    return { msg: "User Data Deleted!", status: 200 };
+    return { message: "User Data Deleted!", status: 200 };
 };
 
 // Delete all User
@@ -50,11 +52,11 @@ const deleteUsers = async () => {
 };
 
 module.exports = {
+    isUserExist,
     createUser,
     getUser,
-    updateUser,
     getUsers,
-    isUserExist,
+    updateUser,
     deleteUser,
     deleteUsers
 };

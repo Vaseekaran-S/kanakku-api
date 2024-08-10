@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 550px; 
+            margin: auto;
+        }
+
+        .outer-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d1d1;
+            padding: 30px 20px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        .logo {
+            width: 160px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        .verify-button {
+            background-color: forestgreen;
+            border-radius: 5px;
+            border: none;
+            padding: 10px 15px;
+            font-weight: 700;
+            color: white !important;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .verify-button:hover {
+            background-color: rgb(23, 91, 23);
+        }
+
+        h2 {
+            font-weight: 500;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="outer-card">
+            <% const siteUrl = "http://localhost:3000" %>
+            <a href="<%= siteUrl %>" target="_blank">
+                <img src="<%= siteUrl %>/images/logo/logo.png" alt="Kanakku Logo" class="logo">
+            </a>
+            <h2>Verify your email</h2>
+            <hr>
+            <h3>Welcome to Kanakku!</h3>
+            <p>
+                Thank you for signing up! Please click the button below to verify your email address.
+            </p>
+            <a href="<%= siteUrl %>/email-verification/<%= data?.token %>" class="verify-button">Verify Email</a>
+            <p>If you didn't request this, please ignore this email.</p>
+        </section>
+        <section class="outer-card">
+            You received this email because you've signed up to <a href="<%= siteUrl %>">Kanakku</a>
+        </section>
+    </div>
+</body>
+</html>
