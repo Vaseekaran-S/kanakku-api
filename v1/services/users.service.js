@@ -1,21 +1,34 @@
 const UserModel = require("../models/users.model");
 const { hashPassword, verifyHashPassword } = require("../utils/encrypt");
-const { createJwtToken } = require("../utils/jwt");
+const { createJwtToken, verifyJwtToken } = require("../utils/jwt");
+const { sendVerificationCode } = require("./auth.service");
 
 // Check User Exists or Not
 const isUserExist = async (email) => {
     return await UserModel.exists({ email: email })
 }
 
+// Check User Exists or Not
+const isUserEmailVerified = async (email) => {
+    return await UserModel.exists({ email: email, isEmailVerified: true })
+}
+
+
 // Create a User
 const createUser = async ({ name, email, mobile, password }) => {
-    if (await isUserExist(email))
-        return { type: "warning", message: "This mail is already taken!", error: "Client Error" };
-
+    const user = await UserModel.findOne({ email: email });
+    if (user) {
+        if (user?.isEmailVerified) {
+            if (!await verifyJwtToken(user?.emailVerificationToken)) return { type: "warning", message: "Email is not verified!", error: "Client Error" };
+            return { type: "warning", message: "This mail is already taken!", error: "Client Error" };
+        }
+        return { type: "warning", message: "Email is not verified!", error: "Client Error" };
+    }
+    const { token } = await sendVerificationCode(email);
     const encryptedPassword = await hashPassword(password);
-    await UserModel.create({ name, email, mobile, password: encryptedPassword });
-    const token = await createJwtToken(email);
-    return { type: "success", message: "User created!", token };
+    await UserModel.create({ name, email, mobile, password: encryptedPassword, emailVerificationToken: token });
+
+    return { type: "success", message: "Verify your Email ID!" };
 };
 
 // Get a User
@@ -32,7 +45,7 @@ const getUsers = async () => {
 
 // Update a User
 const updateUser = async (email, body) => {
-    const data = await UserModel.updateOne({ email: email }, { name: body?.name });
+    const data = await UserModel.updateOne({ email: email }, { ...body });
     return { message: "User Data Updated!" };
 };
 

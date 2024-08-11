@@ -1,4 +1,4 @@
-const { verifyUser, sendVerificationCode } = require("../services/auth.service");
+const { verifyUser, sendVerificationCode, emailTokenVerification } = require("../services/auth.service");
 const { createUser } = require("../services/users.service");
 const { verifyJwtToken } = require("../utils/jwt");
 
@@ -64,14 +64,14 @@ const verifyEmail = async (req, res) => {
     }
 }
 
-// POST: Email Code Verification
-const verifyEmailCode = async (req, res) => {
+// POST: Email Token Verification
+const verifyEmailToken = async (req, res) => {
     try {
-        const { email } = req.body;
-        if (!email)
-            return res.status(400).json({ error: "Client Error", type: "error", message: "Email is not in body!" })
-        let response = await verifyJwtToken(token);
-        response = response ? { ...response, isTokenValid: true, message: "User Token Valid!" } : { isTokenValid: false, message: "User Token is Expired!" }
+        const { token } = req.body;
+        if (!token)
+            return res.status(400).json({ error: "Client Error", type: "error", message: "Token is not in body!" })
+        
+        const response = await emailTokenVerification(token);
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
@@ -84,5 +84,5 @@ module.exports = {
     userLogin,
     tokenVerification,
     verifyEmail,
-    verifyEmailCode
+    verifyEmailToken
 }
