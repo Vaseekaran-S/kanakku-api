@@ -33,7 +33,7 @@ const createUser = async ({ name, email, mobile, password }) => {
 
 // Get a User
 const getUser = async (email) => {
-    const data = await UserModel.findOne({ email: email, isDeleted: false });
+    const data = await UserModel.findOne({ email: email, isDeleted: false }, 'email name mobile');
     return data || { message: "User Not Found!", type: "error" };
 };
 
