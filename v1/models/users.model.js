@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose")
 
 const UserShema = new mongoose.Schema({
@@ -19,13 +18,13 @@ const UserShema = new mongoose.Schema({
         type: String,
         require: true
     },
-    resetPasswordToken: String,
-    resetPasswordTokenExpires: Date,
-    emailVerificationToken: String,
     isEmailVerified: {
         type: Boolean,
         default: false
     },
+    emailVerificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordTokenExpires: Date,
     isDeleted: {
         type: Boolean,
         default: false
