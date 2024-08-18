@@ -1,5 +1,5 @@
-const { verifyUser, sendVerificationCode, emailTokenVerification } = require("../services/auth.service");
-const { createUser } = require("../services/users.service");
+const { verifyUser, sendVerificationCode, emailTokenVerification, sendForgotPasswordToken } = require("../services/auth.service");
+const { createUser, isUserExist } = require("../services/users.service");
 const { verifyJwtToken } = require("../utils/jwt");
 
 // POST: New User SignUp
@@ -79,10 +79,30 @@ const verifyEmailToken = async (req, res) => {
     }
 }
 
+
+// POST: Forgot Password
+const forgotPassword = async(req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email)
+            return res.status(400).json({ error: "Client Error", type: "error", message: "Email is not in body!" })
+        
+        if(!await isUserExist(email))
+            return res.json({ error: "Client Error", type: "error", message: "Email is not registered!" })
+
+        const response = await sendForgotPasswordToken(email);
+        res.json(response)
+    } catch (error) {
+        console.log("ERROR : ", error?.message);
+        res.status(500).json({ message: "Something went wrong at Server!", type: "error", error: error?.message })
+    }
+}
+
 module.exports = {
     userSignUp,
     userLogin,
     tokenVerification,
     verifyEmail,
-    verifyEmailToken
+    verifyEmailToken,
+    forgotPassword
 }

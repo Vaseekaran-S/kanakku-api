@@ -14,6 +14,12 @@ const createAccount = async ({ name, userId, balance, image }) => {
     return { type: "success", message: "Account created!" };
 };
 
+// Get all Accounts Data
+const getAllAccounts = async () => {
+    const data = await AccountModel.find({ isDeleted: false });
+    return data || { message: "Account Not Found!", type: "error" };
+};
+
 // Get an Account
 const getAccount = async (accountId) => {
     const data = await AccountModel.findOne({ _id: accountId, isDeleted: false });
@@ -47,6 +53,7 @@ const deleteAccounts = async () => {
 module.exports = {
     createAccount,
     getAccount,
+    getAllAccounts,
     getUserAccounts,
     updateAccount,
     deleteAccount,

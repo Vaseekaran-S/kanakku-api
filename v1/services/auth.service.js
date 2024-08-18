@@ -4,6 +4,7 @@ const UserModel = require("../models/users.model");
 const { createJwtToken, verifyJwtToken } = require("../utils/jwt");
 const sendMail = require("../utils/nodemailer");
 const { verifyHashPassword } = require("../utils/encrypt");
+const { getUser } = require("./users.service");
 
 // Verify Token
 const verifyUser = async ({ email, password }) => {
@@ -38,8 +39,34 @@ const emailTokenVerification = async(token) => {
     return { message: "User Email is not Verified!", type: "error" }
 }
 
+
+// Send forgot password token to Email
+const sendForgotPasswordToken = async(email) => {
+    const subject = "Reset Password Now - Kanakku";
+    const templatePath = path.join(__dirname + "/../emails/forgot-password.ejs");
+    const token = await createJwtToken(email);
+
+    const { name } = await getUser(email);
+    const data = {
+        email, token, name
+    }
+    const response = await sendMail(data, subject, templatePath);
+    return { token, ...response }
+}
+
+// Verify forgot password token
+const verifyForgotPasswordToken = async(email) => {
+    const subject = "Email verification for Kanakku";
+    const templatePath = path.join(__dirname + "/../emails/verify-email.ejs");
+    const token = await createJwtToken(email);
+    const response = await sendMail({ email, token }, subject, templatePath);
+    return { token, ...response }
+}
+
+
 module.exports = {
     verifyUser,
     sendVerificationCode,
-    emailTokenVerification
+    emailTokenVerification,
+    sendForgotPasswordToken
 }

@@ -5,7 +5,7 @@ const { sendVerificationCode } = require("./auth.service");
 
 // Check User Exists or Not
 const isUserExist = async (email) => {
-    return await UserModel.exists({ email: email })
+    return await UserModel.exists({ email: email, isDeleted: false })
 }
 
 // Check User Exists or Not

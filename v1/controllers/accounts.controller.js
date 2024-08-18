@@ -27,6 +27,17 @@ const getAccount = async(req, res) => {
     }
 }
 
+// GET: Get all accounts
+const getAllAccounts = async(req, res) => {
+    try {
+        const response = await accountService.getAllAccounts()
+        res.status(200).json(response)
+    } catch (error) {
+        console.log("ERROR : ", error?.message);
+        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
 // GET: Get a user accounts
 const getUserAccounts = async(req, res) => {
     try {
@@ -64,6 +75,7 @@ module.exports = {
     createNewAccount,
     getAccount,
     getUserAccounts,
+    getAllAccounts,
     updateAccount,
     deleteAccount
 }
