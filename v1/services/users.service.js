@@ -1,21 +1,16 @@
 const UserModel = require("../models/users.model");
-const { hashPassword, verifyHashPassword } = require("../utils/encrypt");
-const { createJwtToken, verifyJwtToken } = require("../utils/jwt");
-const { sendVerificationCode } = require("./auth.service");
+const { hashPassword } = require("../utils/encrypt");
+const { verifyJwtToken } = require("../utils/jwt");
+const { sendEmailVerificationToken } = require("./auth.service");
 
 // Check User Exists or Not
 const isUserExist = async (email) => {
     return await UserModel.exists({ email: email, isDeleted: false })
 }
 
-// Check User Exists or Not
-const isUserEmailVerified = async (email) => {
-    return await UserModel.exists({ email: email, isEmailVerified: true })
-}
-
 
 // Create a User
-const createUser = async ({ name, email, mobile, password }) => {
+const createUser = async ({ name, email, mobile, password, type }) => {
     const user = await UserModel.findOne({ email: email });
     if (user) {
         if (user?.isEmailVerified) {
@@ -24,9 +19,9 @@ const createUser = async ({ name, email, mobile, password }) => {
         }
         return { type: "warning", message: "Email is not verified!", error: "Client Error" };
     }
-    const { token } = await sendVerificationCode(email);
+    const { token } = await sendEmailVerificationToken(email);
     const encryptedPassword = await hashPassword(password);
-    await UserModel.create({ name, email, mobile, password: encryptedPassword, emailVerificationToken: token });
+    await UserModel.create({ name, email, mobile, type, password: encryptedPassword, emailVerificationToken: token });
 
     return { type: "success", message: "Verify your Email ID!" };
 };
