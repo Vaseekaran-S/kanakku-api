@@ -1,4 +1,4 @@
-const { createUser, verifyUser, sendEmailVerificationToken, emailTokenVerification, sendForgotPasswordToken } = require("../services/auth.service");
+const { createUser, verifyUser, sendEmailVerificationToken, emailTokenVerification, sendForgotPasswordToken, resetUserPassword } = require("../services/auth.service");
 const { isUserExist } = require("../services/users.service");
 const { verifyJwtToken } = require("../utils/jwt");
 
@@ -98,11 +98,26 @@ const forgotPassword = async(req, res) => {
     }
 }
 
+// POST: Reset Password
+const resetPassword = async(req, res) => {
+    try {
+        const { token, password } = req.body;
+        if (!token || !password)
+            return res.json({ error: "Client Error", type: "error", message: "Token or Password is not in body!" })
+
+        const response = await resetUserPassword({ token, newPassword: password });
+        res.json(response)
+    } catch (error) {
+        res.json({ message: "Something went wrong!", type: "error", error: error?.message })
+    }
+}
+
 module.exports = {
     userSignUp,
     userLogin,
     tokenVerification,
     verifyEmail,
     verifyEmailToken,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }
