@@ -12,7 +12,7 @@ const createNewAccount = async(req, res) => {
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -20,10 +20,10 @@ const createNewAccount = async(req, res) => {
 const getAccount = async(req, res) => {
     try {
         const response = await accountService.getAccount(req?.params?.id)
-        res.status(200).json(response)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -31,10 +31,10 @@ const getAccount = async(req, res) => {
 const getAllAccounts = async(req, res) => {
     try {
         const response = await accountService.getAllAccounts()
-        res.status(200).json(response)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -42,10 +42,10 @@ const getAllAccounts = async(req, res) => {
 const getUserAccounts = async(req, res) => {
     try {
         const response = await accountService.getUserAccounts(req?.params?.id)
-        res.status(200).json(response)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -53,21 +53,34 @@ const getUserAccounts = async(req, res) => {
 const updateAccount = async(req, res) => {
     try {
         const response = await accountService.updateAccount(req?.params?.id, req.body)
-        res.status(200).json(response)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
 // DELETE: Delete an account
 const deleteAccount = async(req, res) => {
     try {
-        const response = await accountService.deleteAccount(req?.params?.id)
-        res.status(200).json(response)
+        const { id } = req.body;
+        if(!id) return res.json({ msg: "Account Id Not Found!", error: "Not Found" })
+        const response = await accountService.deleteAccount(id)
+        res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.status(500).json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
+// DELETE: Delete all account
+const deleteAllAccount = async(req, res) => {
+    try {
+        const response = await accountService.deleteAccounts();
+        res.json({ ...response, msg: "Account Table Deleted!"})
+    } catch (error) {
+        console.log("ERROR : ", error?.message);
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -77,5 +90,6 @@ module.exports = {
     getUserAccounts,
     getAllAccounts,
     updateAccount,
-    deleteAccount
+    deleteAccount,
+    deleteAllAccount
 }

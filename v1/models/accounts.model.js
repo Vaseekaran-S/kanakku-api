@@ -9,7 +9,7 @@ const accountSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User"
     },
-    image: String,
+    icon: String,
     balance: {
         type: Number,
         default: 0
