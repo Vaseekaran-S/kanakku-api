@@ -1,6 +1,10 @@
 const mongoose = require("mongoose")
 
 const accountSchema = new mongoose.Schema({
+    url: {
+        type: String,
+        require: true
+    },
     name: {
         type: String,
         require: true

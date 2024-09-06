@@ -1,4 +1,5 @@
 const AccountModel = require("../models/accounts.model");
+const { textToUrl } = require("../utils/urlMaker");
 
 // Check Account Exists or Not
 const isAccountExist = async ({ name, userId }) => {
@@ -14,13 +15,16 @@ const isLimitReached = async (userId) => {
 // Create an Account
 const createAccount = async ({ name, userId, balance = 0, icon }) => {
     name = name.replace(/\s+/g, ' ').trim();
+    const url = textToUrl(name);
+    console.log(url);
+    
     if (await isLimitReached(userId)) {
         return { type: "error", message: "You can only create 10 accounts per email!", error: "Limit Reached" };
     }
     if (await isAccountExist({ name, userId })) {
         return { type: "warning", message: "Account already exist with this name!", error: "Client Error" };
     }
-    await AccountModel.create({ name, userId, balance, icon });
+    await AccountModel.create({ name, userId, balance, icon, url });
     return { type: "success", message: "Account created!" };
 };
 
@@ -38,7 +42,7 @@ const getAccount = async (accountId) => {
 
 // Get a User Accounts
 const getUserAccounts = async (userId) => {
-    const data = await AccountModel.find({ userId: userId, isDeleted: false }, 'name icon balance createdAt updatedAt');
+    const data = await AccountModel.find({ userId: userId, isDeleted: false }, 'url name icon balance createdAt updatedAt');
     return data;
 };
 
