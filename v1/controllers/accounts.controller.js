@@ -49,6 +49,18 @@ const getUserAccounts = async(req, res) => {
     }
 }
 
+// GET: Get a user account by email and account name
+const getUserAccountByName = async(req, res) => {
+    try {
+        const { userId, accountUrl } = req?.params;
+        const response = await accountService.getUserAccountByName(userId, accountUrl);
+        res.json(response);
+    } catch (error) {
+        console.log("ERROR : ", error?.message);
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
 // PUT: Update an account
 const updateAccount = async(req, res) => {
     try {
@@ -89,6 +101,7 @@ module.exports = {
     getAccount,
     getUserAccounts,
     getAllAccounts,
+    getUserAccountByName,
     updateAccount,
     deleteAccount,
     deleteAllAccount

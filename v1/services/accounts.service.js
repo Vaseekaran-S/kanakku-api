@@ -46,6 +46,12 @@ const getUserAccounts = async (userId) => {
     return data;
 };
 
+// Get an Account by name
+const getUserAccountByName = async (userId, url) => {
+    const data = await AccountModel.findOne({ userId: userId, url: url, isDeleted: false }, 'url name icon balance createdAt updatedAt');
+    return data || { message: "Account Not Found!", type: "error" };
+};
+
 // Update an Account
 const updateAccount = async (accountId, body) => {
     const data = await AccountModel.updateOne({ _id: accountId }, { ...body });
@@ -69,6 +75,7 @@ module.exports = {
     getAccount,
     getAllAccounts,
     getUserAccounts,
+    getUserAccountByName,
     updateAccount,
     deleteAccount,
     deleteAccounts
