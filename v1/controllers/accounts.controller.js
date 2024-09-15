@@ -2,12 +2,12 @@
 const accountService = require("../services/accounts.service")
 
 // POST: Create an account
-const createNewAccount = async(req, res) => {
+const createNewAccount = async (req, res) => {
     try {
         const { name, userId } = req.body;
-        if(!name || !userId) 
+        if (!name || !userId)
             return res.json({ error: "Client Error", msg: "Name & UserID are required!" })
-        
+
         const response = await accountService.createAccount(req.body);
         res.json(response)
     } catch (error) {
@@ -17,7 +17,7 @@ const createNewAccount = async(req, res) => {
 }
 
 // GET: Get an account data
-const getAccount = async(req, res) => {
+const getAccount = async (req, res) => {
     try {
         const response = await accountService.getAccount(req?.params?.id)
         res.json(response)
@@ -28,7 +28,7 @@ const getAccount = async(req, res) => {
 }
 
 // GET: Get all accounts
-const getAllAccounts = async(req, res) => {
+const getAllAccounts = async (req, res) => {
     try {
         const response = await accountService.getAllAccounts()
         res.json(response)
@@ -39,7 +39,7 @@ const getAllAccounts = async(req, res) => {
 }
 
 // GET: Get a user accounts
-const getUserAccounts = async(req, res) => {
+const getUserAccounts = async (req, res) => {
     try {
         const response = await accountService.getUserAccounts(req?.params?.id)
         res.json(response)
@@ -49,8 +49,8 @@ const getUserAccounts = async(req, res) => {
     }
 }
 
-// GET: Get a user account by email and account name
-const getUserAccountByName = async(req, res) => {
+// GET: Get a user account by userId and account name
+const getUserAccountByName = async (req, res) => {
     try {
         const { userId, accountUrl } = req?.params;
         const response = await accountService.getUserAccountByName(userId, accountUrl);
@@ -62,7 +62,7 @@ const getUserAccountByName = async(req, res) => {
 }
 
 // PUT: Update an account
-const updateAccount = async(req, res) => {
+const updateAccount = async (req, res) => {
     try {
         const response = await accountService.updateAccount(req?.params?.id, req.body)
         res.json(response)
@@ -72,11 +72,24 @@ const updateAccount = async(req, res) => {
     }
 }
 
-// DELETE: Delete an account
-const deleteAccount = async(req, res) => {
+// PATCH: Update account Type
+const changeAccountType = async (req, res) => {
     try {
-        const { id } = req.body;
-        if(!id) return res.json({ msg: "Account Id Not Found!", error: "Not Found" })
+        const { type } = req.body;
+        if(!type) return res.json({ type: "error", error: "Data missing", msg: "Account Type is not in body" })
+        const response = await accountService.changeAccountType(req?.params?.id, type)
+        res.json(response)
+    } catch (error) {
+        console.log("ERROR : ", error?.message);
+        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
+// DELETE: Delete an account
+const deleteAccount = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) return res.json({ msg: "Account Id Not Found!", error: "Not Found" })
         const response = await accountService.deleteAccount(id)
         res.json(response)
     } catch (error) {
@@ -86,10 +99,10 @@ const deleteAccount = async(req, res) => {
 }
 
 // DELETE: Delete all account
-const deleteAllAccount = async(req, res) => {
+const deleteAllAccount = async (req, res) => {
     try {
         const response = await accountService.deleteAccounts();
-        res.json({ ...response, msg: "Account Table Deleted!"})
+        res.json({ ...response, msg: "Account Table Deleted!" })
     } catch (error) {
         console.log("ERROR : ", error?.message);
         res.json({ msg: "Something went wrong at Server!", error: error?.message })
@@ -103,6 +116,7 @@ module.exports = {
     getAllAccounts,
     getUserAccountByName,
     updateAccount,
+    changeAccountType,
     deleteAccount,
     deleteAllAccount
 }

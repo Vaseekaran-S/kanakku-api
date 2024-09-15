@@ -18,6 +18,10 @@ const accountSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    type: {
+        type: String,
+        default: "Private"
+    },
     isDeleted: {
         type: Boolean,
         default: false

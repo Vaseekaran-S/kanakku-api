@@ -2,8 +2,8 @@ const AccountModel = require("../models/accounts.model");
 const { textToUrl } = require("../utils/urlMaker");
 
 // Check Account Exists or Not
-const isAccountExist = async ({ name, userId }) => {
-    return await AccountModel.exists({ name: name, userId: userId, isDeleted: false })
+const isAccountExist = async ({ name, userId, accountId }) => {
+    return await AccountModel.exists({ _id: { $ne: accountId },name: name, userId: userId, isDeleted: false })
 }
 
 // Find Account Limit for a user
@@ -11,22 +11,6 @@ const isLimitReached = async (userId) => {
     const length = await AccountModel.countDocuments({ userId: userId, isDeleted: false });
     return length >= 10 ? true : false;
 }
-
-// Create an Account
-const createAccount = async ({ name, userId, balance = 0, icon }) => {
-    name = name.replace(/\s+/g, ' ').trim();
-    const url = textToUrl(name);
-    console.log(url);
-    
-    if (await isLimitReached(userId)) {
-        return { type: "error", message: "You can only create 10 accounts per email!", error: "Limit Reached" };
-    }
-    if (await isAccountExist({ name, userId })) {
-        return { type: "warning", message: "Account already exist with this name!", error: "Client Error" };
-    }
-    await AccountModel.create({ name, userId, balance, icon, url });
-    return { type: "success", message: "Account created!" };
-};
 
 // Get all Accounts Data
 const getAllAccounts = async () => {
@@ -48,19 +32,47 @@ const getUserAccounts = async (userId) => {
 
 // Get an Account by name
 const getUserAccountByName = async (userId, url) => {
-    const data = await AccountModel.findOne({ userId: userId, url: url, isDeleted: false }, 'url name icon balance createdAt updatedAt');
+    const data = await AccountModel.findOne({ userId: userId, url: url, isDeleted: false }, 'url name icon balance type createdAt updatedAt');
     return data || { message: "Account Not Found!", type: "error" };
 };
 
+// Create an Account
+const createAccount = async ({ name, userId, balance = 0, icon }) => {
+    name = name.replace(/\s+/g, ' ').trim();
+    const url = textToUrl(name);
+    
+    if (await isLimitReached(userId)) {
+        return { type: "error", message: "You can only create 10 accounts per email!", error: "Limit Reached" };
+    }
+    if (await isAccountExist({ name, userId })) {
+        return { type: "warning", message: "Account already exist with this name!", error: "Client Error" };
+    }
+    await AccountModel.create({ name, userId, balance, icon, url });
+    return { type: "success", message: "Account created!" };
+};
+
 // Update an Account
-const updateAccount = async (accountId, body) => {
-    const data = await AccountModel.updateOne({ _id: accountId }, { ...body });
+const updateAccount = async (accountId, { userId, name, balance, icon }) => {
+    name = name.replace(/\s+/g, ' ').trim();
+    const url = textToUrl(name);
+    if (await isAccountExist({ accountId, name, userId })) {
+        return { type: "warning", message: "Account already exist with this name!", error: "Client Error" };
+    }
+    await AccountModel.updateOne({ _id: accountId }, { name, balance, icon, url });
     return { message: "Account Data Updated!", type: "success" };
+};
+
+// Change an Account Type
+const changeAccountType = async (accountId, type) => {
+    const response = await AccountModel.updateOne({ _id: accountId }, { type });
+    if(response?.matchedCount === 0) return { message: "Account Not Found!", type: "error" };
+    return { message: "Account Type Changed!", type: "success" };
 };
 
 // Delete an Account
 const deleteAccount = async (accountId) => {
-    const data = await AccountModel.updateOne({ accountId: accountId }, { isDeleted: true });
+    const response = await AccountModel.updateOne({ _id: accountId }, { isDeleted: true });
+    if(response?.matchedCount === 0) return { message: "Account Not Found!", type: "error" };
     return { message: "Account Data Deleted!", type: "success" };
 };
 
@@ -77,6 +89,7 @@ module.exports = {
     getUserAccounts,
     getUserAccountByName,
     updateAccount,
+    changeAccountType,
     deleteAccount,
     deleteAccounts
 };
