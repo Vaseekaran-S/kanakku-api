@@ -6,13 +6,13 @@ const createNewAccount = async (req, res) => {
     try {
         const { name, userId } = req.body;
         if (!name || !userId)
-            return res.json({ error: "Client Error", msg: "Name & UserID are required!" })
+            return res.json({ error: "Client Error", message: "Name & UserID are required!" })
 
         const response = await accountService.createAccount(req.body);
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -23,7 +23,7 @@ const getAccount = async (req, res) => {
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -34,7 +34,7 @@ const getAllAccounts = async (req, res) => {
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -45,7 +45,7 @@ const getUserAccounts = async (req, res) => {
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -57,7 +57,7 @@ const getUserAccountByName = async (req, res) => {
         res.json(response);
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -68,7 +68,7 @@ const updateAccount = async (req, res) => {
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -76,12 +76,12 @@ const updateAccount = async (req, res) => {
 const changeAccountType = async (req, res) => {
     try {
         const { type } = req.body;
-        if(!type) return res.json({ type: "error", error: "Data missing", msg: "Account Type is not in body" })
+        if(!type) return res.json({ type: "error", error: "Data missing", message: "Account Type is not in body" })
         const response = await accountService.changeAccountType(req?.params?.id, type)
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -89,12 +89,12 @@ const changeAccountType = async (req, res) => {
 const deleteAccount = async (req, res) => {
     try {
         const { id } = req.params;
-        if (!id) return res.json({ msg: "Account Id Not Found!", error: "Not Found" })
+        if (!id) return res.json({ message: "Account Id Not Found!", error: "Not Found" })
         const response = await accountService.deleteAccount(id)
         res.json(response)
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
@@ -102,10 +102,10 @@ const deleteAccount = async (req, res) => {
 const deleteAllAccount = async (req, res) => {
     try {
         const response = await accountService.deleteAccounts();
-        res.json({ ...response, msg: "Account Table Deleted!" })
+        res.json({ ...response, message: "Account Table Deleted!" })
     } catch (error) {
         console.log("ERROR : ", error?.message);
-        res.json({ msg: "Something went wrong at Server!", error: error?.message })
+        res.json({ message: "Something went wrong at Server!", error: error?.message })
     }
 }
 
