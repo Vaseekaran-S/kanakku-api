@@ -22,7 +22,7 @@ const getTransactionsByAccount = async(req, res) => {
         const { accountId } = req.params;
         if(!accountId) return res.json({ message: "Data missing in body!", error: "Client Error" });
 
-        const response = await service.getTransactionsByAccount(accountId);
+        const response = await service.getTransactionsByAccount(accountId, req.query);
         res.json(response);
     }catch(error){
         console.log("ERROR : ", error?.message);

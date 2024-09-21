@@ -8,8 +8,9 @@ const createTransaction = async ({ type, amount, accountId, userId, category, no
 }
 
 // Get Transactions By Account Id
-const getTransactionsByAccount = async (accountId) => {
-    const data = await TransactionModel.find({ accountId: accountId }, 'amount type category createdAt notes').limit(5).sort({ createdAt: -1 });
+const getTransactionsByAccount = async (accountId, query) => {
+    const { row = 5 } = query;
+    const data = await TransactionModel.find({ accountId: accountId }, 'amount type category createdAt notes').skip(row-5).limit(5).sort({ createdAt: -1 });
     return data || { message: "Account Not Found!", type: "error" };
 }
 
