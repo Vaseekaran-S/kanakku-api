@@ -10,6 +10,10 @@ const transactionSchema = new mongoose.Schema({
         default: 0,
         require: true
     },
+    balance: {
+        type: Number,
+        require: true
+    },
     accountId: {
         type: mongoose.Schema.ObjectId,
         ref: "Account",
