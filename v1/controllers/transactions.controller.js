@@ -5,8 +5,6 @@ const service = require("../services/transacions.service")
 const createTransaction = async(req, res) => {
     try{
         const { amount, accountId, userId, category } = req.body;
-        console.log(req.body);
-        
         if(!amount || !accountId || !userId || !category) return res.json({ message: "Data missing in body!", error: "Client Error" })
         const response = await service.createTransaction(req.body);
         res.json(response);
@@ -20,7 +18,7 @@ const createTransaction = async(req, res) => {
 const getTransactionsByAccount = async(req, res) => {
     try{
         const { accountId } = req.params;
-        if(!accountId) return res.json({ message: "Data missing in body!", error: "Client Error" });
+        if(!accountId) return res.json({ message: "Accound Id is not Found!", error: "Client Error" });
 
         const response = await service.getTransactionsByAccount(accountId, req.query);
         res.json(response);
@@ -30,7 +28,22 @@ const getTransactionsByAccount = async(req, res) => {
     }
 }
 
+// GET: Get all transactions by category of an Account
+const getTransactionsDonutChart = async(req, res) => {
+    try{
+        const { accountId } = req.params;
+        if(!accountId) return res.json({ message: "Accound Id is not Found!", error: "Client Error" });
+
+        const response = await service.getTransactionsDonutChart(accountId, req.query);
+        res.json(response);
+    }catch(error){
+        console.log("ERROR : ", error?.message);
+        res.json({ type: "error", message: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
 module.exports = {
     createTransaction,
-    getTransactionsByAccount
+    getTransactionsByAccount,
+    getTransactionsDonutChart
 }
