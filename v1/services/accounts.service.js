@@ -26,7 +26,7 @@ const getAccount = async (accountId) => {
 
 // Get a User Accounts
 const getUserAccounts = async (userId) => {
-    const data = await AccountModel.find({ userId: userId, isDeleted: false }, 'url name icon balance createdAt updatedAt');
+    const data = await AccountModel.find({ userId: userId, isDeleted: false }, 'url name icon type balance createdAt updatedAt');
     return data;
 };
 
