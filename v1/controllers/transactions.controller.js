@@ -42,8 +42,23 @@ const getTransactionsDonutChart = async(req, res) => {
     }
 }
 
+// GET: Get transactions for line chart
+const getLineChartTransactions = async(req, res) => {
+    try{
+        const { accountId } = req.params;
+        if(!accountId) return res.json({ message: "Accound Id is not Found!", error: "Client Error" });
+
+        const response = await service.getLineChartTransactions(accountId, req.query);
+        res.json(response);
+    }catch(error){
+        console.log("ERROR : ", error?.message);
+        res.json({ type: "error", message: "Something went wrong at Server!", error: error?.message })
+    }
+}
+
 module.exports = {
     createTransaction,
     getTransactionsByAccount,
-    getTransactionsDonutChart
+    getTransactionsDonutChart,
+    getLineChartTransactions
 }

@@ -26,12 +26,47 @@ const getTransactionsDonutChart = async (accountId, query) => {
         { $match: { accountId: new mongoose.Types.ObjectId(accountId), type: type, isDeleted: false } },
         { $group: { _id: "$category", count: { $sum: 1 }, amount: { $sum: "$amount" } } },
         { $project: { _id: 0, category: "$_id", count: 1, amount: 1 } }
-    ]);
+    ])
     return data || { message: "Account Not Found!", type: "error" };
 }
+
+// Get Line Chart transactions
+const getLineChartTransactions = async (accountId, query) => {
+    const { type } = query;
+
+    const aggregateTransactions = async (transactionType) => {
+        return await TransactionModel.aggregate([
+            { $match: { accountId: new mongoose.Types.ObjectId(accountId), type: transactionType, isDeleted: false } },
+            { 
+                $group: { 
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, 
+                    count: { $sum: 1 }, 
+                    value: { $sum: "$amount" }
+                }
+            },
+            { $sort: { _id: 1 } },
+            { $project: { _id: 0, label: { $dateToString: { format: "%d-%m-%Y", date: { $dateFromString: { dateString: "$_id" } } } }, count: 1, value: 1 } },
+        ]);
+    };
+
+    if(type){
+        return await aggregateTransactions(type);
+    }
+
+    const incomeData = await aggregateTransactions("Income");
+    const expenseData = await aggregateTransactions("Expense");
+
+    const data = {
+        Income: incomeData,
+        Expense: expenseData
+    }
+
+    return data || { message: "Account Id Not Found!", type: "error" };
+};
 
 module.exports = {
     createTransaction,
     getTransactionsByAccount,
-    getTransactionsDonutChart
+    getTransactionsDonutChart,
+    getLineChartTransactions
 }
