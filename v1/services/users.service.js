@@ -28,7 +28,7 @@ const createUser = async ({ name, email, mobile, password, type }) => {
 
 // Get a User
 const getUser = async (email) => {
-    const data = await UserModel.findOne({ email: email, isDeleted: false }, 'email name mobile');
+    const data = await UserModel.findOne({ email: email, isDeleted: false }, 'email name mobile role bio type');
     return data || { message: "User Not Found!", type: "error" };
 };
 
@@ -39,9 +39,9 @@ const getUsers = async () => {
 };
 
 // Update a User
-const updateUser = async (email, body) => {
-    const data = await UserModel.updateOne({ email: email }, { ...body });
-    return { message: "User Data Updated!" };
+const updateUser = async (_id, body) => {
+    await UserModel.updateOne({ _id: _id }, { ...body });
+    return { type: "success", message: "Profile Updated!" };
 };
 
 // Delete a User

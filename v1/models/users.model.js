@@ -18,6 +18,14 @@ const UserShema = new mongoose.Schema({
         type: String,
         require: true
     },
+    role: {
+        type: String,
+        require: true
+    },
+    bio: {
+        type: String,
+        require: true
+    },
     password: {
         type: String,
         require: true
