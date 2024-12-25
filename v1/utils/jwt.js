@@ -5,7 +5,7 @@ const secretKey = "kanakku-token-provider";
 
 // Create a Token
 const createJwtToken = async(userMail) => {
-    return jwt.sign({userMail}, secretKey, { expiresIn: "12h" });
+    return jwt.sign({userMail}, secretKey, { expiresIn: "24h" });
 }
 
 // Verify Token

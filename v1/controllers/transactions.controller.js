@@ -1,5 +1,5 @@
 
-const service = require("../services/transacions.service")
+const service = require("../services/transactions.service")
 
 // POST: Create a Transaction
 const createTransaction = async(req, res) => {

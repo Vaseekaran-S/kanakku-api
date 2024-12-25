@@ -1,6 +1,8 @@
 const AccountModel = require("../models/accounts.model");
 const { textToUrl } = require("../utils/urlMaker");
 
+const { getRecentTransactions } = require("./transactions.service.js")
+
 // Check Account Exists or Not
 const isAccountExist = async ({ name, userId, accountId }) => {
     return await AccountModel.exists({ _id: { $ne: accountId },name: name, userId: userId, isDeleted: false })
@@ -35,6 +37,24 @@ const getUserAccountByName = async (userId, url) => {
     const data = await AccountModel.findOne({ userId: userId, url: url, isDeleted: false }, 'url name icon balance type createdAt updatedAt');
     return data || { message: "Account Not Found!", type: "error" };
 };
+
+// Get an Account by name
+const getUserPortfolio = async (userId) => {
+    const accounts = await AccountModel.find({ userId: userId, isDeleted: false }, 'url name icon balance type').lean();
+
+    const data = await Promise.all(
+        accounts.map(async (account) => {
+            const transactions = await getRecentTransactions(account._id); // Fetch recent transactions
+            return {
+                ...account,
+                transactions
+            };
+        })
+    );
+    
+    return data || { message: "Not Found!", type: "error" };
+};
+
 
 // Create an Account
 const createAccount = async ({ name, userId, balance = 0, icon }) => {
@@ -88,6 +108,7 @@ module.exports = {
     getAllAccounts,
     getUserAccounts,
     getUserAccountByName,
+    getUserPortfolio,
     updateAccount,
     changeAccountType,
     deleteAccount,

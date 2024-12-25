@@ -64,9 +64,17 @@ const getLineChartTransactions = async (accountId, query) => {
     return data || { message: "Account Id Not Found!", type: "error" };
 };
 
+
+// Get Recent Transactions of an Account
+const getRecentTransactions = async (accountId) => {
+    const data = await (await TransactionModel.find({ accountId: accountId }, 'balance createdAt type').sort({ createdAt: -1 }).limit(20).lean()).reverse();
+    return data || [];
+}
+
 module.exports = {
     createTransaction,
     getTransactionsByAccount,
     getTransactionsDonutChart,
-    getLineChartTransactions
+    getLineChartTransactions,
+    getRecentTransactions
 }
